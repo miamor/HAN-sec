@@ -1,11 +1,11 @@
 {
     "dir_data_report": "data/reports/TuTu_sm",
     "dir_data_json": "data/json/TuTu_sm",
-    "dir_data_pickle": "data/pickle/TuTu_sm",
     "dir_data_embedding": "data/embeddings/TuTu_sm",
     "dir_data_graph": "data/graphs/TuTu_sm",
     "dir_data_graphviz": "data/graphviz/TuTu_sm",
     "dir_data_networkx": "data/nx/TuTu_sm",
+    "dir_data_pickle": "data/pickle/TuTu_sm",
 
     "mapping_labels": {"benign": 0, "malware": 1},
 
@@ -14,7 +14,7 @@
     "train_list_file": "data/TuTu_sm_train_list.txt",
     "test_list_file": "data/TuTu_sm_test_list.txt",
 
-    "process_from": "graph",
+    "process_from": "report",
     
     "train_embedder": true,
     "edge_embedder": "tfidf",
