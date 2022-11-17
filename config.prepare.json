@@ -9,6 +9,8 @@
 
     "mapping_labels": {"benign": 0, "malware": 1},
 
+    "do_draw": true,
+
     "split_train_test": false,
     "train_ratio": 0,
     "train_list_file": "data/TuTu_sm_train_list.txt",

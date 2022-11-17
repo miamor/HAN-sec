@@ -175,6 +175,10 @@ class PrepareData():
         self.mapping_labels = self.__config__['mapping_labels']
 
 
+        """ Visualize """
+        self.do_draw = self.__config__['do_draw']
+
+
         """ Load train/test data """
         self.train_list_file = self.__config__['train_list_file']
         self.test_list_file = self.__config__['test_list_file']
@@ -377,30 +381,22 @@ class PrepareData():
         #? map an edge identifier string ({s_node_idx}--{d_node_idx}) to its edge idx
         self.map_edgestr_edge = {}
 
-        # #? use this dict to map an identifier key to its corresponding node in the current graph
-        # #? eg. for process, map its pid to the corresponding node
-        # #?     for api, map its api identifier (rn, only name) to the corresponding node
-        # self.map_key2node = {}
+        if self.do_draw:
+            #? networkx for visualization
+            self.Gx = nx.DiGraph()
+            self.Gx_nodes = {}
+            self.Gx_edges_by_type = {}
+            for e_type in self.map_etype2style.keys(): #? a bit different to visualize
+                self.Gx_edges_by_type[e_type] = []
+            self.Gx_nodes_lbl_by_type = {}
+            for n_type in self.n_types:
+                self.Gx_nodes_lbl_by_type[n_type] = {}
 
-        # self.procs_pid = []
-
-
-        #? networkx for visualization
-        self.Gx = nx.DiGraph()
-        self.Gx_nodes = {}
-        self.Gx_edges_by_type = {}
-        for e_type in self.map_etype2style.keys(): #? a bit different to visualize
-            self.Gx_edges_by_type[e_type] = []
-        self.Gx_nodes_lbl_by_type = {}
-        for n_type in self.n_types:
-            self.Gx_nodes_lbl_by_type[n_type] = {}
-
-
-        #? for visualization
-        self.g_codes = {
-            'nodes': {},
-            'edges': {}
-        }
+            #? graphviz for visualization
+            self.g_codes = {
+                'nodes': {},
+                'edges': {}
+            }
 
         return
 
@@ -578,10 +574,12 @@ class PrepareData():
 
 
         """ Save graphviz / networkx graphs (for visualization) """
-        self.visualize_graphviz()
-        del self.g_codes
-        self.visualize_networkx()
-        del self.Gx, self.Gx_nodes, self.Gx_nodes_lbl_by_type, self.Gx_edges_by_type
+        if self.do_draw:
+            self.visualize_graphviz()
+            del self.g_codes #? cleanup
+            self.visualize_networkx()
+            del self.Gx, self.Gx_nodes, self.Gx_nodes_lbl_by_type, self.Gx_edges_by_type #? cleanup
+        
         return
 
 
@@ -906,20 +904,21 @@ class PrepareData():
 
 
             """ For visualization """
-            n_shape = self.map_ntype2style[n_type]['shape']
-            n_style = self.map_ntype2style[n_type]['style']
-            n_color = self.map_ntype2style[n_type]['color']
-            n_fillcolor = self.map_ntype2style[n_type]['fillcolor']
-            n_fontcolor = self.map_ntype2style[n_type]['fontcolor']
-            #? Networkx graph
-            self.Gx.add_node(node_idx)
-            self.Gx_nodes[node_idx] = node
-            self.Gx_nodes[node_idx]['color'] = n_fillcolor
-            self.Gx_nodes[node_idx]['shape'] = n_shape
-            self.Gx_nodes_lbl_by_type[n_type][node_idx] = node_idx if n_type == 'api' else n_name
-            #? Graphviz graph
-            n_txt = f'{node_idx} {node_identifier_str}'
-            self.g_codes['nodes'][node_idx] = f'node [shape="{n_shape}" style="{n_style}" color="{n_color}" fontcolor="{n_fontcolor}" fillcolor="{n_fillcolor}"] {node_idx} [label="{n_txt}"]'
+            if self.do_draw:
+                n_shape = self.map_ntype2style[n_type]['shape']
+                n_style = self.map_ntype2style[n_type]['style']
+                n_color = self.map_ntype2style[n_type]['color']
+                n_fillcolor = self.map_ntype2style[n_type]['fillcolor']
+                n_fontcolor = self.map_ntype2style[n_type]['fontcolor']
+                #? Networkx graph
+                self.Gx.add_node(node_idx)
+                self.Gx_nodes[node_idx] = node
+                self.Gx_nodes[node_idx]['color'] = n_fillcolor
+                self.Gx_nodes[node_idx]['shape'] = n_shape
+                self.Gx_nodes_lbl_by_type[n_type][node_idx] = node_idx if n_type == 'api' else n_name
+                #? Graphviz graph
+                n_txt = f'{node_idx} {node_identifier_str}'
+                self.g_codes['nodes'][node_idx] = f'node [shape="{n_shape}" style="{n_style}" color="{n_color}" fontcolor="{n_fontcolor}" fillcolor="{n_fillcolor}"] {node_idx} [label="{n_txt}"]'
 
             return node_idx, node
         
@@ -978,13 +977,13 @@ class PrepareData():
                 self.add_edge_args_embedding_data(args)
 
                 """ For visualization """
-                #? Networkx graph 
-                self.Gx.add_edge(s_node_idx, d_node_idx)
-                self.Gx_edges_by_type[e_type].append((s_node_idx, d_node_idx))
-                #? Graphviz graph
-                # self.g_codes.append(f'{s_node_idx} -> {d_node_idx} [color="{e_color}" label="{source_node_str}->{dest_node_str}"]')
-                self.g_codes['edges'][edge_identifier_str] = f'{s_node_idx} -> {d_node_idx} [color="{self.map_etype2style[e_type]}"]'
-
+                if self.do_draw:
+                    #? Networkx graph 
+                    self.Gx.add_edge(s_node_idx, d_node_idx)
+                    self.Gx_edges_by_type[e_type].append((s_node_idx, d_node_idx))
+                    #? Graphviz graph
+                    # self.g_codes.append(f'{s_node_idx} -> {d_node_idx} [color="{e_color}" label="{source_node_str}->{dest_node_str}"]')
+                    self.g_codes['edges'][edge_identifier_str] = f'{s_node_idx} -> {d_node_idx} [color="{self.map_etype2style[e_type]}"]'
 
         return
 

@@ -19,6 +19,8 @@ python prepare_data.py
 
     "mapping_labels": {"benign": 0, "malware": 1},
 
+    "do_draw": true,
+
     "split_train_test": false,
     "train_ratio": 0,
     "train_list_file": "data/TuTu_sm_train_list.txt",
@@ -47,6 +49,7 @@ python prepare_data.py
 - `dir_data_pickle`: path to directory to store all stuff needed for training (final output of `PrepareData`)
 
 - `mapping_labels`: a dict that maps each label to an int64 code (label is the same as subsfolder names under each `dir_data...`, int64 code is used for training)
+- `do_draw`: if `true`, generate graphviz and networkx graph for visualization and save to `dir_data_graphviz` and `dir_data_networkx`
 - `split_train_test`: `true` if we want the code to split the set into `train` and `test` set. `false` if we've already had a list of files used for train and test.  
 **NOTE 1:** Even if `split_train_test = false`, these two files can still be overwritten (filepaths listed in these two files which does not have api calls (cannot construct graph) will be removed from the list)  
 **NOTE 2:** `test` set here is used only for testing inference. During training, the `train` set here will be further divided into `train`, `val` set (refer to `app.py`)
