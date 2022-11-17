@@ -1,0 +1,10 @@
+networkx==2.8.8
+scipy==1.9.3
+dill==0.3.6
+torch==1.13.0
+dgl==0.9.1
+graphviz==0.20.1
+matplotlib==3.6.2
+gensim==4.2.0
+scikit-learn==1.1.3
+
