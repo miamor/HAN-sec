@@ -154,6 +154,7 @@ class PrepareData():
             exit()
         
         self.__config__ = json.load(open(config_filepath))
+        print(self.__config__)
 
         """ Overwrite """
         # self.dir_vocab = self.__config__['dir_vocab']
@@ -168,7 +169,7 @@ class PrepareData():
         
         """ Split dataset into train/test """
         self.split_train_test = self.__config__['split_train_test']
-        self.train_ratio =  int(self.__config__['train_ratio'])
+        self.train_ratio =  self.__config__['train_ratio']
 
 
         """ Mapping labels (classes) """
@@ -191,6 +192,9 @@ class PrepareData():
                 exit()
             self.train_list_name = [line.strip() for line in open(self.train_list_file).read().split('\n')]
             self.test_list_name = [line.strip() for line in open(self.test_list_file).read().split('\n')]
+        else:
+            if self.train_ratio <= 0:
+                print('[!] `train_ratio` cannot be <= 0 if `split_train_test` = false')
 
 
         """ Node/edge embedder """
@@ -299,7 +303,7 @@ class PrepareData():
         #? pack train
         for filename in self.train_list_name:
             lbl = filename.split('__')[0]
-            graph_path = os.path.join(self.dir_data_graph, lbl, filename.replace('.json', '.bin'))
+            graph_path = os.path.join(self.dir_data_graph, lbl, filename.replace('.json.json', '.json').replace('.json', '.bin'))
             # graph = load_pickle(graph_path)
             #? this graph_path contains only 1 graph
             graphs, label_dict = load_graphs(graph_path)
@@ -314,7 +318,7 @@ class PrepareData():
         #? pack test
         for filename in self.test_list_name:
             lbl = filename.split('__')[0]
-            graph_path = os.path.join(self.dir_data_graph, lbl, filename.replace('.json', '.bin'))
+            graph_path = os.path.join(self.dir_data_graph, lbl, filename.replace('.json.json', '.json').replace('.json', '.bin'))
             # graph = load_pickle(graph_path)
             #? this graph_path contains only 1 graph
             graphs, label_dict = load_graphs(graph_path)
@@ -460,8 +464,11 @@ class PrepareData():
             for label in self.mapping_labels.keys():
                 dir_json_this_lbl = os.path.join(self.dir_data_json, label)
                 tot_files_this_lbl = len([name for name in os.listdir(dir_json_this_lbl)])
+                print('[ ] dir_json_this_lbl', dir_json_this_lbl)
+                print('    tot_files_this_lbl', tot_files_this_lbl)
+                print('    self.train_ratio', self.train_ratio)
                 train_end_idx = tot_files_this_lbl*self.train_ratio
-                # print(label, 'train_end_idx', train_end_idx)
+                print(f'   {label} train_end_idx : {train_end_idx}')
                 n = 0
                 for filename in os.listdir(dir_json_this_lbl):
                     n += 1
@@ -1209,5 +1216,6 @@ class PrepareData():
 
 
 if __name__ == '__main__':
-    preparer = PrepareData()
+    config_filepath = sys.argv[1] if len(sys.argv) > 1 else ''
+    preparer = PrepareData(config_filepath)
     preparer.from_set()

@@ -314,5 +314,6 @@ class App:
 
 
 if __name__ == '__main__':
-    app = App()
-    app.train('output/TuTu_sm')
+    config_filepath = sys.argv[1] if len(sys.argv) > 1 else ''
+    app = App(config_filepath)
+    app.train('output/myreports')

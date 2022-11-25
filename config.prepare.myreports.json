@@ -1,0 +1,31 @@
+{
+    "dir_data_report": "data/reports/myreports",
+    "dir_data_json": "data/json/myreports",
+    "dir_data_embedding": "data/embeddings/myreports",
+    "dir_data_graph": "data/graphs/myreports",
+    "dir_data_graphviz": "data/graphviz/myreports",
+    "dir_data_networkx": "data/nx/myreports",
+    "dir_data_pickle": "data/pickle/myreports",
+
+    "mapping_labels": {"benign": 0, "malware": 1},
+
+    "do_draw": true,
+
+    "split_train_test": true,
+    "train_ratio": 0.8,
+    "train_list_file": "data/myreports_train_list.txt",
+    "test_list_file": "data/myreports_test_list.txt",
+
+    "process_from": "report",
+    
+    "train_embedder": true,
+    "edge_embedder": "tfidf",
+    "node_embedder": "tfidf",
+    "preprocess_level": "word",
+
+    "max_ft": 100000,
+    "top_k": 3,
+
+    "vector_size": 10,
+    "dm": 0
+}
