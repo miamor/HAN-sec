@@ -1,5 +1,7 @@
 ## Sample data & train output (checkpoint): 
 https://drive.google.com/drive/folders/1mr8SYoCvkJEcT0YWV1UMAsZQg1h3Qqei?usp=sharing
+## Full data (binaries):
+https://drive.google.com/drive/folders/1_FzZUIXfC652Z7GdlT9lyYUikx9Q4MiR?usp=sharing
 
 ## Prepare data, create graphs
 ```bash
